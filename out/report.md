@@ -2,11 +2,11 @@
 
 > Latest central-bank policy rates and recent developments from the Bank for International Settlements.
 
-**Generated:** 2026-08-31 20:30 UTC  
+**Generated:** 2026-08-31 20:32 UTC  
 **Period:** 2015-01-01 → latest available observation  
 **Coverage:** United States, Euro area, United Kingdom, Japan, Switzerland  
-**Requested:** US, EA, GB, JP, CH, FR  
-**BIS codes:** US, XM, GB, JP, CH, FR  
+**Requested:** US, EA, GB, JP, CH  
+**BIS codes:** US, XM, GB, JP, CH  
 
 ---
 
@@ -21,20 +21,6 @@
 | Switzerland      | 0.0000% | 2026-08-25    |           — | ↓ 0.2500 pp | 2025-06-20    |                      431 |
 
 *Monthly Δ compares the latest observation with the final available observation before the current month. ↑ indicates a hike, ↓ a cut, and — no change.*
-
-> [!WARNING]
-> **Incomplete coverage:** France could not be included in the current policy-rate snapshot.
->
-> ### France (FR)
->
-> No policy-rate observations are available for France on or after **2015-01-01**.
->
-> The most recent available BIS observation is **3.0000%** on **1998-12-31**.
->
-> **BIS metadata**
->
-> From 1 Jan 1999 onwards: the series is discontinued as France joined the euro area; from 4 Jan 1982 to 31 Dec 1998: the rate corresponds to the repo rate; from 5 Jul 1973 to 3 Jan 1982: the rate corresponds to the repo rate on call for tenders, firm purchases or repos before purchases on public and private bills of 1st category ("taux des interventions effectuées par la Banque de France sur appels d'offres, achats fermes ou pensions avant achats, effets publics et effets privés à court terme de 1ère catégorie"). Whenever multiple rates were available for a given period, the rate with the shortest maturity has been selected; from 20 Jan 1945 to 4 Jul 1973: the rate was the official discount rate set by the Bank of France.
->
 
 ---
 
