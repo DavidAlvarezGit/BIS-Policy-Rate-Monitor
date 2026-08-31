@@ -19,6 +19,9 @@ dependencies = [
 [project.scripts]
 bis-prates = "bis_prates.cli:app"
 
+[tool.ruff]
+extend-exclude = ["notebooks"]
+
 [build-system]
 requires = ["uv_build>=0.12.6,<0.13"]
 build-backend = "uv_build"
