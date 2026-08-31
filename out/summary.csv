@@ -1,0 +1,6 @@
+country_code,country_name,frequency,title,unit_measure,unit_multiplier,decimals,latest_date,latest_rate,previous_month_end_date,previous_month_end_rate,change_vs_previous_month_end,last_change_date,last_change_size,policy_direction,days_since_last_change,min_rate,min_rate_date,max_rate,max_rate_date
+US,United States,D, Central bank policy rates - United States - Daily - End of period,368: Per cent per year,0: Units,4,2026-08-25,3.625,2026-07-31,3.625,0.0,2025-12-11,-0.25,cut,257,0.125,2015-01-01,5.375,2023-07-27
+XM,Euro area,D, Central bank policy rates - Euro area - Daily - End of period,368: Per cent per year,0: Units,4,2026-08-25,2.25,2026-07-31,2.25,0.0,2026-06-17,0.25,hike,69,0.0,2016-03-16,4.5,2023-09-20
+GB,United Kingdom,D, Central bank policy rates - United Kingdom - Daily - End of period,368: Per cent per year,0: Units,4,2026-08-24,3.75,2026-07-31,3.75,0.0,2025-12-18,-0.25,cut,249,0.1,2020-03-19,5.25,2023-08-03
+JP,Japan,D, Central bank policy rates - Japan - Daily - End of period,368: Per cent per year,0: Units,4,2026-08-25,1.0,2026-07-31,1.0,0.0,2026-06-17,0.25,hike,69,-0.1,2016-09-21,1.0,2026-06-17
+CH,Switzerland,D, Central bank policy rates - Switzerland - Daily - End of period,368: Per cent per year,0: Units,4,2026-08-25,0.0,2026-07-31,0.0,0.0,2025-06-20,-0.25,cut,431,-0.75,2015-01-15,1.75,2023-06-23

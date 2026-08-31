@@ -1,0 +1,155 @@
+{
+  "run_date":"2026-08-31",
+  "start_date":"2015-01-01",
+  "dataflow_id":"WS_CBPOL",
+  "dataset_file":"WS_CBPOL_csv_flat.zip",
+  "source":"BIS Data Portal bulk download",
+  "requested_countries":[
+    "US",
+    "EA",
+    "GB",
+    "JP",
+    "CH",
+    "FR"
+  ],
+  "resolved_countries":[
+    "US",
+    "XM",
+    "GB",
+    "JP",
+    "CH",
+    "FR"
+  ],
+  "countries":[
+    {
+      "country_code":"US",
+      "country_name":"United States",
+      "latest_snapshot":{
+        "latest_rate_pct":3.625,
+        "latest_date":"2026-08-25",
+        "last_month_end_rate_pct":3.625,
+        "last_month_end_date":"2026-07-31",
+        "change_vs_last_month_end_pp":0.0,
+        "last_change_date":"2025-12-11",
+        "last_change_size_pp":-0.25,
+        "policy_direction":"cut",
+        "days_since_last_change":257,
+        "min_since_start_pct":0.125,
+        "min_date":"2015-01-01",
+        "max_since_start_pct":5.375,
+        "max_date":"2023-07-27"
+      },
+      "series_metadata":{
+        "frequency":"D",
+        "title":" Central bank policy rates - United States - Daily - End of period",
+        "unit_measure":"368: Per cent per year",
+        "unit_multiplier":"0: Units",
+        "decimals":4
+      }
+    },
+    {
+      "country_code":"XM",
+      "country_name":"Euro area",
+      "latest_snapshot":{
+        "latest_rate_pct":2.25,
+        "latest_date":"2026-08-25",
+        "last_month_end_rate_pct":2.25,
+        "last_month_end_date":"2026-07-31",
+        "change_vs_last_month_end_pp":0.0,
+        "last_change_date":"2026-06-17",
+        "last_change_size_pp":0.25,
+        "policy_direction":"hike",
+        "days_since_last_change":69,
+        "min_since_start_pct":0.0,
+        "min_date":"2016-03-16",
+        "max_since_start_pct":4.5,
+        "max_date":"2023-09-20"
+      },
+      "series_metadata":{
+        "frequency":"D",
+        "title":" Central bank policy rates - Euro area - Daily - End of period",
+        "unit_measure":"368: Per cent per year",
+        "unit_multiplier":"0: Units",
+        "decimals":4
+      }
+    },
+    {
+      "country_code":"GB",
+      "country_name":"United Kingdom",
+      "latest_snapshot":{
+        "latest_rate_pct":3.75,
+        "latest_date":"2026-08-24",
+        "last_month_end_rate_pct":3.75,
+        "last_month_end_date":"2026-07-31",
+        "change_vs_last_month_end_pp":0.0,
+        "last_change_date":"2025-12-18",
+        "last_change_size_pp":-0.25,
+        "policy_direction":"cut",
+        "days_since_last_change":249,
+        "min_since_start_pct":0.1,
+        "min_date":"2020-03-19",
+        "max_since_start_pct":5.25,
+        "max_date":"2023-08-03"
+      },
+      "series_metadata":{
+        "frequency":"D",
+        "title":" Central bank policy rates - United Kingdom - Daily - End of period",
+        "unit_measure":"368: Per cent per year",
+        "unit_multiplier":"0: Units",
+        "decimals":4
+      }
+    },
+    {
+      "country_code":"JP",
+      "country_name":"Japan",
+      "latest_snapshot":{
+        "latest_rate_pct":1.0,
+        "latest_date":"2026-08-25",
+        "last_month_end_rate_pct":1.0,
+        "last_month_end_date":"2026-07-31",
+        "change_vs_last_month_end_pp":0.0,
+        "last_change_date":"2026-06-17",
+        "last_change_size_pp":0.25,
+        "policy_direction":"hike",
+        "days_since_last_change":69,
+        "min_since_start_pct":-0.1,
+        "min_date":"2016-09-21",
+        "max_since_start_pct":1.0,
+        "max_date":"2026-06-17"
+      },
+      "series_metadata":{
+        "frequency":"D",
+        "title":" Central bank policy rates - Japan - Daily - End of period",
+        "unit_measure":"368: Per cent per year",
+        "unit_multiplier":"0: Units",
+        "decimals":4
+      }
+    },
+    {
+      "country_code":"CH",
+      "country_name":"Switzerland",
+      "latest_snapshot":{
+        "latest_rate_pct":0.0,
+        "latest_date":"2026-08-25",
+        "last_month_end_rate_pct":0.0,
+        "last_month_end_date":"2026-07-31",
+        "change_vs_last_month_end_pp":0.0,
+        "last_change_date":"2025-06-20",
+        "last_change_size_pp":-0.25,
+        "policy_direction":"cut",
+        "days_since_last_change":431,
+        "min_since_start_pct":-0.75,
+        "min_date":"2015-01-15",
+        "max_since_start_pct":1.75,
+        "max_date":"2023-06-23"
+      },
+      "series_metadata":{
+        "frequency":"D",
+        "title":" Central bank policy rates - Switzerland - Daily - End of period",
+        "unit_measure":"368: Per cent per year",
+        "unit_multiplier":"0: Units",
+        "decimals":4
+      }
+    }
+  ]
+}
