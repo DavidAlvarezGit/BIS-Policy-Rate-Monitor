@@ -2,7 +2,7 @@
 
 > Latest central-bank policy rates and recent developments from the Bank for International Settlements.
 
-**Generated:** 2026-08-31 19:50 UTC  
+**Generated:** 2026-08-31 20:30 UTC  
 **Period:** 2015-01-01 → latest available observation  
 **Coverage:** United States, Euro area, United Kingdom, Japan, Switzerland  
 **Requested:** US, EA, GB, JP, CH, FR  
@@ -12,13 +12,13 @@
 
 ## Latest Policy Rate Snapshot
 
-| Country / Area   |   Rate | Latest Date   |   Monthly Δ | Last Move   | Last Change   |   Days Since Last Change |
-|:-----------------|-------:|:--------------|------------:|:------------|:--------------|-------------------------:|
-| United States    |  3.62% | 2026-08-25    |           — | ↓ 0.25 pp   | 2025-12-11    |                      257 |
-| Euro area        |  2.25% | 2026-08-25    |           — | ↑ 0.25 pp   | 2026-06-17    |                       69 |
-| United Kingdom   |  3.75% | 2026-08-24    |           — | ↓ 0.25 pp   | 2025-12-18    |                      249 |
-| Japan            |  1.00% | 2026-08-25    |           — | ↑ 0.25 pp   | 2026-06-17    |                       69 |
-| Switzerland      |  0.00% | 2026-08-25    |           — | ↓ 0.25 pp   | 2025-06-20    |                      431 |
+| Country / Area   |    Rate | Latest Date   |   Monthly Δ | Last Move   | Last Change   |   Days Since Last Change |
+|:-----------------|--------:|:--------------|------------:|:------------|:--------------|-------------------------:|
+| United States    | 3.6250% | 2026-08-25    |           — | ↓ 0.2500 pp | 2025-12-11    |                      257 |
+| Euro area        | 2.2500% | 2026-08-25    |           — | ↑ 0.2500 pp | 2026-06-17    |                       69 |
+| United Kingdom   | 3.7500% | 2026-08-24    |           — | ↓ 0.2500 pp | 2025-12-18    |                      249 |
+| Japan            | 1.0000% | 2026-08-25    |           — | ↑ 0.2500 pp | 2026-06-17    |                       69 |
+| Switzerland      | 0.0000% | 2026-08-25    |           — | ↓ 0.2500 pp | 2025-06-20    |                      431 |
 
 *Monthly Δ compares the latest observation with the final available observation before the current month. ↑ indicates a hike, ↓ a cut, and — no change.*
 
@@ -29,7 +29,7 @@
 >
 > No policy-rate observations are available for France on or after **2015-01-01**.
 >
-> The most recent available BIS observation is **3.00%** on **1998-12-31**.
+> The most recent available BIS observation is **3.0000%** on **1998-12-31**.
 >
 > **BIS metadata**
 >

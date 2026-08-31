@@ -174,11 +174,11 @@ def write_markdown_report(
         )
 
     table["latest_rate"] = table["latest_rate"].map(
-        lambda value: f"{value:.2f}%" if pd.notna(value) else ""
+        lambda value: f"{value:.4f}%" if pd.notna(value) else ""
     )
 
     table["change_vs_previous_month_end"] = table["change_vs_previous_month_end"].map(
-        lambda value: "—" if pd.isna(value) or value == 0 else f"{value:+.2f} pp"
+        lambda value: "—" if pd.isna(value) or value == 0 else f"{value:+.4f} pp"
     )
 
     table["last_move"] = table.apply(
@@ -462,7 +462,7 @@ def _coverage_warning(
 
         lines.append(
             f"> The most recent available BIS observation is "
-            f"**{float(latest_rate):.2f}%** on "
+            f"**{float(latest_rate):.4f}%** on "
             f"**{latest_date:%Y-%m-%d}**."
         )
 
@@ -498,10 +498,10 @@ def _format_last_move(
         return ""
 
     if row["policy_direction"] == "cut":
-        return f"↓ {abs(value):.2f} pp"
+        return f"↓ {abs(value):.4f} pp"
 
     if row["policy_direction"] == "hike":
-        return f"↑ {abs(value):.2f} pp"
+        return f"↑ {abs(value):.4f} pp"
 
     return "—"
 
