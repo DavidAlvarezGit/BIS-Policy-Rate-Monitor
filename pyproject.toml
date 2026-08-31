@@ -1,10 +1,32 @@
 [project]
-name = "bis-policy-rate-monitor"
+name = "bis_prates"
 version = "0.1.0"
-description = "Add your description here"
+description = "Download, validate, and report BIS central bank policy rates"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "beautifulsoup4>=4.15.0",
+    "matplotlib>=3.11.1",
+    "msgspec>=0.21.1",
+    "pandas>=3.0.5",
+    "pysdmx>=1.19.0",
+    "rapidfuzz>=3.14.6",
     "requests>=2.34.2",
+    "tabulate>=0.10.0",
+    "typer>=0.27.2",
+]
+
+[project.scripts]
+bis-prates = "bis_prates.cli:app"
+
+[build-system]
+requires = ["uv_build>=0.12.6,<0.13"]
+build-backend = "uv_build"
+module-name = "bis_prates"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1",
+    "ruff>=0.16.5",
+    "ipykernel>=7.3.0",
 ]
