@@ -50,6 +50,7 @@ def discover_bulk_downloads(
                 "url": url,
             }
         )
+
     if not downloads:
         raise RuntimeError(
             f"No BIS CSV bulk-download ZIP links found at {response.url}. "
@@ -113,9 +114,10 @@ def fetch_reference_area(
 
     destination.parent.mkdir(parents=True, exist_ok=True)
 
+    # Request the latest BIS reference-area codelist from the SDMX API.
     service = RestService(
-        "https://stats.bis.org/api/v2",
-        ApiVersion.V2_0_0,
+        BIS_SDMX_API_URL,
+        ApiVersion.V2_1_0,
     )
 
     response = service.structure(
@@ -126,7 +128,7 @@ def fetch_reference_area(
             "latest",
         )
     )
-
+    # Decode the SDMX-JSON response into a pysdmx codelist object.
     codelist = msgspec.json.Decoder(JsonCodelistMessage).decode(response).to_model()
 
     reference_areas = {code.id: code.name for code in codelist.codes}
