@@ -154,9 +154,9 @@ dependency versions recorded in `uv.lock`.
 
 ## AI usage note
 
-I used OpenAI Codex (GPT-5.6) to help draft and review code, tests, and
-documentation. I treated its suggestions as a starting point and simplified or
-rejected them when they did not fit the task. The most common issue was
+I used OpenAI Codex (GPT-5.6) to help with early versions of the data pipeline, report, tests, and README. I reviewed and changed the generated code throughout the project, 
+simplifying parts that were too complex, keeping the modules consistent, 
+and checking the results against the BIS data and metadata. The most common issue was
 unnecessary complexity: at one stage, the report code grew beyond 700 lines for a
 fairly small reporting requirement. Codex also sometimes changed one module
 without updating another. For example, changing the values returned by
