@@ -155,10 +155,6 @@ every push and pull request to `main`. It installs Python and the locked project
 environment with `uv sync --locked --all-extras --dev`, so CI uses the same
 dependency versions recorded in `uv.lock`.
 
-The tests exercise download discovery, streamed file download, daily and
-monthly date parsing, exact deduplication, conflicting-observation detection,
-change calculations, daily-frequency preference, and generated report content.
-
 ## Operational considerations
 
 - Source data is cached locally to make repeated development runs faster.
@@ -173,19 +169,19 @@ change calculations, daily-frequency preference, and generated report content.
 I used OpenAI Codex (GPT-5.6) to help draft and review code, tests, and
 documentation. I treated its suggestions as a starting point and simplified or
 rejected them when they did not fit the task. The most common issue was
-overengineering: at one stage, the report code grew beyond 700 lines for a
+unnecessary complexity: at one stage, the report code grew beyond 700 lines for a
 fairly small reporting requirement. Codex also sometimes changed one module
 without updating another. For example, changing the values returned by
 `report.py` left `cli.py` trying to unpack the old result. In another case, a
 request to remove one historical chart was interpreted as removing all plots.
 Reviewing the full diff and running the CI checks helped catch these problems.
 
-The data itself also needed manual interpretation. France's national policy-rate
+The data itself also needed manual interpretation. Spain's national policy-rate
 series ends before the selected reporting period because monetary policy moved
 to the euro-area level; it is not simply missing because of a pipeline error. I
 checked the BIS metadata and historical observations to distinguish discontinued
 series from processing problems. This was a useful reminder that AI can speed up
-implementation, but it does not replace domain knowledge or end-to-end review.
+implementation, but it does not replace end-to-end review.
 
 ## Data source
 
