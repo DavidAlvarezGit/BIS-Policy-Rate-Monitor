@@ -103,7 +103,7 @@ This produces `data/processed/policy_rates.csv`.
 
 ```bash
 uv run bis-prates report \
-  --countries "US,EA,GB,JP,CH" \
+  --countries "ES,US,EA,GB,JP,CH" \
   --start "2015-01-01"
 ```
 
