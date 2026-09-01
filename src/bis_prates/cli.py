@@ -4,7 +4,7 @@ from bis_prates.ingestion import fetch_dataset, fetch_reference_area
 from bis_prates.metadata import load_reference_areas, resolve_country_codes
 from bis_prates.report import generate_report
 from bis_prates.summary import build_summary, write_summary
-from bis_prates.transform import transform as transform_dataset
+from bis_prates.transform import transform_policy_rates as transform_dataset
 
 app = typer.Typer(
     name="bis-prates",
@@ -36,7 +36,7 @@ def transform() -> None:
 @app.command()
 def report(
     countries: str = "US,EA,GB,JP,CH",
-    start: str | None = None,
+    start: str = "2015-01-01",
 ) -> None:
     """Generate the summary, chart, and Markdown report."""
     requested_codes = [

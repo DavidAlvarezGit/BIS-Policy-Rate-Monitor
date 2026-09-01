@@ -1,7 +1,7 @@
 import pandas as pd
 import pytest
 
-from bis_prates.transform import tidy_policy_rates
+from bis_prates.transform import clean_policy_rates
 
 
 def make_raw_row(
@@ -31,10 +31,10 @@ def make_raw_row(
     }
 
 
-def test_tidy_policy_rates_parses_bis_fields() -> None:
+def test_clean_policy_rates_parses_bis_fields() -> None:
     raw = pd.DataFrame([make_raw_row()])
 
-    result = tidy_policy_rates(raw)
+    result = clean_policy_rates(raw)
 
     assert len(result) == 1
 
@@ -48,7 +48,7 @@ def test_tidy_policy_rates_parses_bis_fields() -> None:
     assert row["decimals"] == 2
 
 
-def test_tidy_policy_rates_parses_monthly_date_as_month_end() -> None:
+def test_clean_policy_rates_parses_monthly_date_as_month_end() -> None:
     raw = pd.DataFrame(
         [
             make_raw_row(
@@ -58,13 +58,13 @@ def test_tidy_policy_rates_parses_monthly_date_as_month_end() -> None:
         ]
     )
 
-    result = tidy_policy_rates(raw)
+    result = clean_policy_rates(raw)
 
     assert result.loc[0, "frequency"] == "M"
     assert result.loc[0, "observation_date"] == pd.Timestamp("2026-07-31")
 
 
-def test_tidy_policy_rates_drops_exact_duplicates() -> None:
+def test_clean_policy_rates_drops_exact_duplicates() -> None:
     row = make_raw_row()
 
     raw = pd.DataFrame(
@@ -74,12 +74,12 @@ def test_tidy_policy_rates_drops_exact_duplicates() -> None:
         ]
     )
 
-    result = tidy_policy_rates(raw)
+    result = clean_policy_rates(raw)
 
     assert len(result) == 1
 
 
-def test_tidy_policy_rates_rejects_conflicting_duplicates() -> None:
+def test_clean_policy_rates_rejects_conflicting_duplicates() -> None:
     raw = pd.DataFrame(
         [
             make_raw_row(observation_value="1.00"),
@@ -89,6 +89,6 @@ def test_tidy_policy_rates_rejects_conflicting_duplicates() -> None:
 
     with pytest.raises(
         ValueError,
-        match="Conflicting observations",
+        match="Multiple different observations",
     ):
-        tidy_policy_rates(raw)
+        clean_policy_rates(raw)

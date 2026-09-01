@@ -2,19 +2,30 @@ from pathlib import Path
 
 import pandas as pd
 
-UNIQUE_KEY = [
-    "country_code",
-    "frequency",
-    "observation_date",
-]
+COLUMN_RENAMES = {
+    "FREQ:Frequency": "frequency",
+    "REF_AREA:Reference area": "reference_area",
+    "TIME_PERIOD:Time period or range": "time_period_raw",
+    "OBS_VALUE:Observation Value": "observation_value",
+    "TITLE:Title": "title",
+    "UNIT_MEASURE:Unit of measure": "unit_measure",
+    "UNIT_MULT:Unit Multiplier": "unit_multiplier",
+    "DECIMALS:Decimals": "decimals",
+    "COMPILATION:Compilation": "compilation",
+    "SOURCE_REF:Publication Source": "source_ref",
+    "SUPP_INFO_BREAKS:Supplemental information and breaks": "supp_info_breaks",
+    "OBS_STATUS:Observation Status": "obs_status",
+    "OBS_CONF:Observation confidentiality": "obs_conf",
+    "OBS_PRE_BREAK:Pre-Break Observation": "obs_pre_break",
+}
 
-OUTPUT_COLUMNS = [
-    "frequency",
+FINAL_COLUMNS = [
     "country_code",
     "country_name",
-    "time_period_raw",
+    "frequency",
     "observation_date",
     "observation_value",
+    "time_period_raw",
     "title",
     "unit_measure",
     "unit_multiplier",
@@ -27,8 +38,10 @@ OUTPUT_COLUMNS = [
     "obs_pre_break",
 ]
 
+SERIES_KEY = ["country_code", "frequency", "observation_date"]
 
-def transform(
+
+def transform_policy_rates(
     zip_path: Path | str = Path("data/raw/WS_CBPOL_csv_flat.zip"),
     out_path: Path | str = Path("data/processed/policy_rates.csv"),
 ) -> Path:
@@ -41,57 +54,34 @@ def transform(
 
     raw = pd.read_csv(zip_path, compression="zip", low_memory=False)
 
-    tidy = tidy_policy_rates(raw)
+    tidy = clean_policy_rates(raw)
 
     out_path.parent.mkdir(parents=True, exist_ok=True)
 
-    tidy.to_csv(out_path, index=False, encoding="utf-8", date_format="%Y-%m-%d")
+    tidy.to_csv(
+        out_path,
+        index=False,
+        encoding="utf-8",
+        date_format="%Y-%m-%d",
+    )
 
     return out_path
 
 
-def tidy_policy_rates(df: pd.DataFrame) -> pd.DataFrame:
+def clean_policy_rates(df: pd.DataFrame) -> pd.DataFrame:
     """Clean the BIS central-bank policy-rate dataset."""
-    required = {
-        "FREQ:Frequency",
-        "REF_AREA:Reference area",
-        "TIME_PERIOD:Time period or range",
-        "OBS_VALUE:Observation Value",
-        "TITLE:Title",
-        "UNIT_MEASURE:Unit of measure",
-        "UNIT_MULT:Unit Multiplier",
-        "DECIMALS:Decimals",
-    }
-
-    missing = required - set(df.columns)
+    missing = set(COLUMN_RENAMES) - set(df.columns)
 
     if missing:
         raise ValueError(f"Missing expected BIS columns: {sorted(missing)}")
 
-    tidy = df.rename(
-        columns={
-            "FREQ:Frequency": "frequency",
-            "REF_AREA:Reference area": "reference_area",
-            "TIME_PERIOD:Time period or range": "time_period_raw",
-            "OBS_VALUE:Observation Value": "observation_value",
-            "UNIT_MEASURE:Unit of measure": "unit_measure",
-            "UNIT_MULT:Unit Multiplier": "unit_multiplier",
-            "TIME_FORMAT:Time Format": "time_format",
-            "COMPILATION:Compilation": "compilation",
-            "DECIMALS:Decimals": "decimals",
-            "SOURCE_REF:Publication Source": "source_ref",
-            "SUPP_INFO_BREAKS:Supplemental information and breaks": (
-                "supp_info_breaks"
-            ),
-            "TITLE:Title": "title",
-            "OBS_STATUS:Observation Status": "obs_status",
-            "OBS_CONF:Observation confidentiality": "obs_conf",
-            "OBS_PRE_BREAK:Pre-Break Observation": "obs_pre_break",
-        }
-    ).copy()
+    tidy = df.rename(columns=COLUMN_RENAMES).copy()
 
     # Drop SDMX transport-level metadata.
-    tidy = tidy.drop(columns=["STRUCTURE", "STRUCTURE_ID", "ACTION"], errors="ignore")
+    tidy = tidy.drop(
+        columns=["STRUCTURE", "STRUCTURE_ID", "ACTION"],
+        errors="ignore",
+    )
 
     # "M: Monthly" -> "M"
     tidy["frequency"] = tidy["frequency"].str.split(":", n=1).str[0].str.strip()
@@ -104,7 +94,8 @@ def tidy_policy_rates(df: pd.DataFrame) -> pd.DataFrame:
 
     # Preserve legitimate BIS missing observations as NaN.
     tidy["observation_value"] = pd.to_numeric(
-        tidy["observation_value"], errors="coerce"
+        tidy["observation_value"],
+        errors="coerce",
     )
 
     tidy["decimals"] = pd.to_numeric(
@@ -112,7 +103,7 @@ def tidy_policy_rates(df: pd.DataFrame) -> pd.DataFrame:
         errors="coerce",
     ).astype("Int64")
 
-    tidy["observation_date"] = parse_observation_date(
+    tidy["observation_date"] = convert_period_to_date(
         tidy["time_period_raw"],
         tidy["frequency"],
     )
@@ -122,36 +113,46 @@ def tidy_policy_rates(df: pd.DataFrame) -> pd.DataFrame:
     # Exact duplicate rows can safely be collapsed.
     tidy = tidy.drop_duplicates()
 
-    duplicated = tidy.duplicated(subset=UNIQUE_KEY, keep=False)
+    if tidy.duplicated(SERIES_KEY).any():
+        raise ValueError(
+            "Multiple different observations found for the same "
+            "country, frequency, and date."
+        )
 
-    if duplicated.any():
-        raise ValueError(f"Conflicting observations found for {UNIQUE_KEY}.")
+    tidy = tidy[FINAL_COLUMNS]
 
-    tidy = tidy[OUTPUT_COLUMNS]
-
-    return tidy.sort_values(UNIQUE_KEY).reset_index(drop=True)
+    return tidy.sort_values(SERIES_KEY).reset_index(drop=True)
 
 
-def parse_observation_date(
+def convert_period_to_date(
     time_period: pd.Series,
     frequency: pd.Series,
 ) -> pd.Series:
     """Convert BIS daily and monthly periods to timestamps."""
-    dates = pd.Series(pd.NaT, index=time_period.index, dtype="datetime64[ns]")
+    dates = pd.Series(
+        pd.NaT,
+        index=time_period.index,
+        dtype="datetime64[ns]",
+    )
 
     daily = frequency.eq("D")
     monthly = frequency.eq("M")
 
     dates.loc[daily] = pd.to_datetime(
-        time_period.loc[daily], format="%Y-%m-%d", errors="coerce"
+        time_period.loc[daily],
+        format="%Y-%m-%d",
+        errors="coerce",
     )
 
     dates.loc[monthly] = pd.to_datetime(
-        time_period.loc[monthly], format="%Y-%m", errors="coerce"
+        time_period.loc[monthly],
+        format="%Y-%m",
+        errors="coerce",
     ) + pd.offsets.MonthEnd(0)
 
     invalid = time_period.notna() & dates.isna()
+
     if invalid.any():
-        raise ValueError("Could not parse some BIS observation dates. ")
+        raise ValueError("Could not parse some BIS observation dates.")
 
     return dates
