@@ -3,7 +3,7 @@ from pathlib import Path
 
 from rapidfuzz import process
 
-COUNTRY_ALIASES = {
+BIS_COUNTRY_CODE_MAP = {
     "EA": "XM",
 }
 
@@ -31,7 +31,7 @@ def resolve_country_codes(
 
     for code in codes:
         normalized = code.strip().upper()
-        bis_code = COUNTRY_ALIASES.get(normalized, normalized)
+        bis_code = BIS_COUNTRY_CODE_MAP.get(normalized, normalized)
 
         if bis_code not in reference_areas:
             suggestion = process.extractOne(

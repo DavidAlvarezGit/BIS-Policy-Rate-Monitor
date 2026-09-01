@@ -19,10 +19,6 @@ SUMMARY_COLUMNS = [
     "last_change_size",
     "policy_direction",
     "days_since_last_change",
-    "min_rate",
-    "min_rate_date",
-    "max_rate",
-    "max_rate_date",
 ]
 
 
@@ -62,7 +58,7 @@ def summarize_policy_rates(
     start: str | None = None,
 ) -> pd.DataFrame:
     """Build a latest policy-rate snapshot for selected countries."""
-    country_codes = _normalize_country_codes(countries)
+    country_codes = normalize_country_codes(countries)
 
     available = set(df["country_code"].dropna().astype(str).str.upper().unique())
 
@@ -75,15 +71,12 @@ def summarize_policy_rates(
         df["country_code"].isin(country_codes) & df["observation_value"].notna()
     ].copy()
 
-    if start is not None:
-        start_date = pd.Timestamp(start)
-
-        selected = selected.loc[selected["observation_date"] >= start_date].copy()
-
     if selected.empty:
         raise ValueError("No usable policy-rate observations found.")
 
-    selected = _select_reporting_frequency(selected)
+    selected = select_reporting_frequency(selected)
+
+    start_date = pd.Timestamp(start) if start is not None else None
 
     summaries = []
 
@@ -95,6 +88,12 @@ def summarize_policy_rates(
         if country.empty:
             continue
 
+        if start_date is not None:
+            in_period = country["observation_date"] >= start_date
+
+            if not in_period.any():
+                continue
+
         summaries.append(_summarize_country(country))
 
     return pd.DataFrame(
@@ -103,22 +102,47 @@ def summarize_policy_rates(
     )
 
 
-def _select_reporting_frequency(
+def normalize_country_codes(
+    countries: list[str] | tuple[str, ...],
+) -> list[str]:
+    """Normalize country codes while preserving input order."""
+    country_codes = []
+
+    for country in countries:
+        code = country.strip().upper()
+
+        if code and code not in country_codes:
+            country_codes.append(code)
+
+    if not country_codes:
+        raise ValueError("At least one country code must be provided.")
+
+    return country_codes
+
+
+def select_reporting_frequency(
     df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """Prefer daily observations, with monthly as a fallback."""
-    daily_countries = set(
-        df.loc[
-            df["frequency"].eq("D"),
-            "country_code",
-        ]
+    """Prefer daily observations within each country-month."""
+    selected = df.copy()
+
+    selected["month"] = selected["observation_date"].dt.to_period("M")
+
+    has_daily = (
+        selected["frequency"]
+        .eq("D")
+        .groupby(
+            [
+                selected["country_code"],
+                selected["month"],
+            ]
+        )
+        .transform("any")
     )
 
-    keep_daily = df["country_code"].isin(daily_countries) & df["frequency"].eq("D")
+    keep = selected["frequency"].eq("D") | (selected["frequency"].eq("M") & ~has_daily)
 
-    keep_monthly = ~df["country_code"].isin(daily_countries) & df["frequency"].eq("M")
-
-    return df.loc[keep_daily | keep_monthly].copy()
+    return selected.loc[keep].drop(columns="month").copy()
 
 
 def _summarize_country(
@@ -126,17 +150,12 @@ def _summarize_country(
 ) -> dict:
     """Compute latest, month-end, and rate-change statistics for one country."""
     latest = country.iloc[-1]
+    latest_rate = latest["observation_value"]
 
     previous_month_end = _previous_month_end(
         country,
         latest_date=latest["observation_date"],
     )
-
-    minimum = country.loc[country["observation_value"].idxmin()]
-
-    maximum = country.loc[country["observation_value"].idxmax()]
-
-    latest_rate = latest["observation_value"]
 
     rate_changes = country["observation_value"].diff()
     changed = rate_changes.ne(0) & rate_changes.notna()
@@ -188,10 +207,6 @@ def _summarize_country(
         "last_change_size": last_change_size,
         "policy_direction": policy_direction,
         "days_since_last_change": days_since_last_change,
-        "min_rate": minimum["observation_value"],
-        "min_rate_date": minimum["observation_date"],
-        "max_rate": maximum["observation_value"],
-        "max_rate_date": maximum["observation_date"],
     }
 
 
@@ -208,24 +223,6 @@ def _previous_month_end(
         return None
 
     return previous.iloc[-1]
-
-
-def _normalize_country_codes(
-    countries: list[str] | tuple[str, ...],
-) -> list[str]:
-    """Normalize country codes while preserving input order."""
-    country_codes = []
-
-    for country in countries:
-        code = country.strip().upper()
-
-        if code and code not in country_codes:
-            country_codes.append(code)
-
-    if not country_codes:
-        raise ValueError("At least one country code must be provided.")
-
-    return country_codes
 
 
 def write_summary(
@@ -257,8 +254,6 @@ def write_summary(
         "latest_date",
         "previous_month_end_date",
         "last_change_date",
-        "min_rate_date",
-        "max_rate_date",
     ]:
         json_summary[column] = pd.to_datetime(
             json_summary[column],
@@ -282,10 +277,6 @@ def write_summary(
                     "last_change_size_pp": row["last_change_size"],
                     "policy_direction": row["policy_direction"],
                     "days_since_last_change": row["days_since_last_change"],
-                    "min_since_start_pct": row["min_rate"],
-                    "min_date": row["min_rate_date"],
-                    "max_since_start_pct": row["max_rate"],
-                    "max_date": row["max_rate_date"],
                 },
                 "series_metadata": {
                     "frequency": row["frequency"],

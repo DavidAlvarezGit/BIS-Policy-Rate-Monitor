@@ -3,9 +3,8 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import pandas as pd
 
-COUNTRY_ALIASES = {
-    "EA": "XM",
-}
+from bis_prates.metadata import BIS_COUNTRY_CODE_MAP
+from bis_prates.summary import normalize_country_codes, select_reporting_frequency
 
 
 def generate_report(
@@ -39,9 +38,9 @@ def generate_report(
     if requested_countries is None:
         requested_codes = summary["country_code"].astype(str).tolist()
     else:
-        requested_codes = _normalize_country_codes(requested_countries)
+        requested_codes = normalize_country_codes(requested_countries)
 
-    resolved_codes = [COUNTRY_ALIASES.get(code, code) for code in requested_codes]
+    resolved_codes = [BIS_COUNTRY_CODE_MAP.get(code, code) for code in requested_codes]
 
     coverage_issues = _find_coverage_issues(
         history=history,
@@ -60,7 +59,7 @@ def generate_report(
             report_history["observation_date"] >= start_date
         ].copy()
 
-    report_history = _select_reporting_frequency(report_history)
+    report_history = select_reporting_frequency(report_history)
 
     if report_history.empty:
         raise ValueError("No policy-rate history available for the report.")
@@ -97,10 +96,10 @@ def create_policy_rate_timeseries_chart(
     summary: pd.DataFrame,
     output_path: Path | str,
 ) -> Path:
-    """Plot policy-rate histories for the selected countries."""
+    """Plot policy-rate histories for the reported countries."""
     output_path = Path(output_path)
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    fig, ax = plt.subplots(figsize=(9, 5))
 
     for country_code in summary["country_code"]:
         country = history.loc[history["country_code"].eq(country_code)].sort_values(
@@ -110,32 +109,25 @@ def create_policy_rate_timeseries_chart(
         if country.empty:
             continue
 
-        country_name = country["country_name"].iloc[-1]
-
         ax.plot(
             country["observation_date"],
             country["observation_value"],
-            label=f"{country_name} ({country_code})",
-            linewidth=1.7,
+            label=country["country_name"].iloc[-1],
+            linewidth=1.8,
         )
 
-    ax.set_title("Central Bank Policy Rates Over Time")
-    ax.set_xlabel("Date")
-    ax.set_ylabel("Policy rate (%)")
-    ax.grid(alpha=0.25)
-    ax.legend(
-        frameon=False,
-        ncol=2,
+    ax.set(
+        title="Policy Rates Across Selected Economies",
+        xlabel="",
+        ylabel="Policy rate (%)",
     )
+    ax.axhline(0, linewidth=0.8, alpha=0.5)
+    ax.grid(axis="y", alpha=0.2)
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(frameon=False, ncol=2)
 
     fig.tight_layout()
-
-    fig.savefig(
-        output_path,
-        dpi=160,
-        bbox_inches="tight",
-    )
-
+    fig.savefig(output_path, dpi=160, bbox_inches="tight")
     plt.close(fig)
 
     return output_path
@@ -300,18 +292,19 @@ def write_markdown_report(
             "",
             (
                 "Daily observations are used when available, with monthly "
-                "observations used as a fallback. Monthly change compares "
-                "the latest policy rate with the final available observation "
-                "before the current month."
+                "observations used as a fallback. Countries must have at "
+                "least one usable observation within the selected reporting "
+                "period to be included in the snapshot. Monthly change "
+                "compares the latest policy rate with the final available "
+                "observation before the current month."
             ),
             "",
             (
                 "The last change is the most recent non-zero policy-rate "
-                "move within the selected reporting period. Days since "
-                "change is measured from that observation to the latest "
-                "available observation. Missing BIS observations are "
-                "retained during transformation but excluded from "
-                "calculations."
+                "move in the available BIS series. Days since change is "
+                "measured from that observation to the latest available "
+                "observation. Missing BIS observations are retained during "
+                "transformation but excluded from calculations."
             ),
             "",
             "## Data Source",
@@ -504,36 +497,3 @@ def _format_last_move(
         return f"↑ {abs(value):.4f} pp"
 
     return "—"
-
-
-def _normalize_country_codes(
-    countries: list[str] | tuple[str, ...],
-) -> list[str]:
-    """Normalize country codes while preserving input order."""
-    codes = []
-
-    for country in countries:
-        code = country.strip().upper()
-
-        if code and code not in codes:
-            codes.append(code)
-
-    return codes
-
-
-def _select_reporting_frequency(
-    df: pd.DataFrame,
-) -> pd.DataFrame:
-    """Prefer daily observations, with monthly as a fallback."""
-    daily_countries = set(
-        df.loc[
-            df["frequency"].eq("D"),
-            "country_code",
-        ]
-    )
-
-    keep_daily = df["country_code"].isin(daily_countries) & df["frequency"].eq("D")
-
-    keep_monthly = ~df["country_code"].isin(daily_countries) & df["frequency"].eq("M")
-
-    return df.loc[keep_daily | keep_monthly].copy()
