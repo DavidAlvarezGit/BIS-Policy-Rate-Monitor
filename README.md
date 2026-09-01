@@ -154,22 +154,13 @@ dependency versions recorded in `uv.lock`.
 
 ## AI usage note
 
-I used OpenAI Codex (GPT-5.6) to help with early versions of the data pipeline, report, tests, and README. I reviewed and changed the generated code throughout the project, 
-simplifying parts that were too complex, keeping the modules consistent, 
-and checking the results against the BIS data and metadata. The most common issue was
-unnecessary complexity: at one stage, the report code grew beyond 700 lines for a
-fairly small reporting requirement. Codex also sometimes changed one module
-without updating another. For example, changing the values returned by
-`report.py` left `cli.py` trying to unpack the old result. In another case, a
-request to remove one historical chart was interpreted as removing all plots.
-Reviewing the full diff and running the CI checks helped catch these problems.
+I used OpenAI Codex (GPT-5.6) to help with early versions of the data pipeline, report, tests, and README. I reviewed and changed the code throughout the project, mainly simplifying parts that became too complex, keeping the modules consistent, and checking the results against the BIS data and metadata.
 
-The data itself also needed manual interpretation. Spain's national policy-rate
-series ends before the selected reporting period because monetary policy moved
-to the euro-area level; it is not simply missing because of a pipeline error. I
-checked the BIS metadata and historical observations to distinguish discontinued
-series from processing problems. This was a useful reminder that AI can speed up
-implementation, but it does not replace end-to-end review.
+The main issue I ran into was unnecessary complexity. At one point, the report code had grown to more than 700 lines for a fairly small reporting requirement. Codex also sometimes changed one part of the project without updating another. For example, after changing what report.py returned, cli.py was still trying to unpack the old result. In another case, I asked it to remove one historical chart and it removed all plots instead. Reviewing the full diff and running the CI checks helped catch these kinds of problems.
+
+The data also required some manual interpretation. Spain's national policy-rate series ends before the selected reporting period because monetary policy moved to the euro-area level, so it was not simply missing because of a pipeline issue. I checked the BIS metadata and historical observations to make sure I could distinguish discontinued series from actual processing problems.
+
+Overall, Codex was useful for speeding up the implementation, but I still needed to review the code carefully, simplify it, test it, and interpret the data myself.
 
 ## Data source
 
