@@ -2,10 +2,11 @@
 
 A data pipeline that discovers and downloads the latest
 Bank for International Settlements (BIS) central bank policy-rate dataset,
-transforms it into a tidy  dataset, and produces country-level
-summaries, charts, and a Markdown report.
+transforms it into a tidy dataset, and produces country-level
+summaries, a chart, and a Markdown report.
 
-The project implements a command-line interface and also uses the BIS SDMX API to validate country and area codes and provides “did you mean” suggestions.
+The project implements a command-line interface and uses the BIS SDMX API to
+validate country and area codes and provide “did you mean” suggestions.
 
 ## Pipeline overview
 
@@ -13,7 +14,7 @@ The project implements a command-line interface and also uses the BIS SDMX API t
 BIS bulk-download page              BIS SDMX API
           |                              |
           v                              v
-WS_CBPOL_csv_flat.ZIP                 reference-area codelist
+WS_CBPOL_csv_flat.zip                 reference-area codelist
           |                              |
           +--------------+---------------+
                          |
@@ -26,7 +27,7 @@ WS_CBPOL_csv_flat.ZIP                 reference-area codelist
             +------------+------------+
             |            |            |
             v            v            v
-      CSV and JSON     charts     Markdown report
+      CSV and JSON      chart     Markdown report
 ```
 
 The pipeline has three explicit stages:
@@ -49,14 +50,14 @@ src/bis_prates/
   metadata.py     Country-code validation and aliases
   transform.py    Source validation and tidy-data transformation
   summary.py      Snapshot and policy-rate change calculations
-  report.py       Charts and Markdown report generation
-tests/             Unit tests for ingestion, transformation, and summaries
+  report.py       Chart and Markdown report generation
+tests/             Unit tests for ingestion, transformation, summaries, and reports
 .github/workflows/
   ci.yaml          GitHub Actions checks for linting, formatting, and tests
 notebooks/         Exploratory analysis
 data/raw/          Cached source files; ignored by Git
 data/processed/    Generated tidy dataset; ignored by Git
-out/               Summary files, charts, and report
+out/               Summary files, chart, and report
 ```
 
 ## Requirements
@@ -105,6 +106,7 @@ uv run bis-prates report \
   --countries "US,EA,GB,JP,CH" \
   --start "2015-01-01"
 ```
+
 Invalid codes produce a suggestion when a sufficiently
 close match exists.
 
@@ -115,7 +117,7 @@ The report command creates:
 | `out/summary.csv` | Latest snapshot for analysis |
 | `out/summary.json` | Structured snapshot with metadata |
 | `out/policy_rates.png` | Policy-rate history by country or area |
-| `out/report.md` | Human-readable report with tables, charts, and methodology |
+| `out/report.md` | Human-readable report with a table, chart, and methodology |
 
 ## Data contract and methodology
 
@@ -145,7 +147,6 @@ The summary applies the following rules:
   latest observation.
 - The last move is the most recent non-zero difference between consecutive
   selected observations.
-- Minimum and maximum rates are calculated within the requested period.
 - Missing observations are retained in the tidy dataset but excluded from
   numerical summary calculations.
 
@@ -166,15 +167,15 @@ dependency versions recorded in `uv.lock`.
 
 The tests exercise download discovery, streamed file download, daily and
 monthly date parsing, exact deduplication, conflicting-observation detection,
-change calculations, and daily-frequency preference.
+change calculations, daily-frequency preference, and generated report content.
 
 ## Operational considerations
 
 - Source data is cached locally to make repeated development runs faster.
 - Use `fetch --refresh` for a new reporting cycle.
 - `data/` is intentionally excluded from version control because the BIS bulk
-  dataset is generated external data and can be reproduced by the pipeline..
-- Generated reports identify the latest available observation date, this may
+  dataset is generated external data and can be reproduced by the pipeline.
+- Generated reports identify the latest available observation date. This may
   differ across countries because of publication schedules and source coverage.
 
 ## AI usage note
