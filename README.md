@@ -117,7 +117,7 @@ The report command creates:
 | `out/summary.csv` | Latest snapshot for analysis |
 | `out/summary.json` | Structured snapshot with metadata |
 | `out/policy_rates.png` | Policy-rate history by country or area |
-| `out/report.md` | Human-readable report with a table, chart, and methodology |
+| `out/report.md` | Report with a table, chart, and methodology |
 
 ## Data contract and methodology
 
@@ -126,16 +126,6 @@ The tidy observation dataset uses the key:
 ```text
 country_code + frequency + observation_date
 ```
-
-Important fields include:
-
-- `observation_value`: policy rate reported by the BIS
-- `frequency`: daily (`D`) or monthly (`M`)
-- `observation_date`: daily date or normalized month-end date
-- `title`, `unit_measure`, `unit_multiplier`, and `decimals`: series attributes
-- `compilation`, `source_ref`, and `supp_info_breaks`: provenance and break
-  information retained from the source
-- `obs_status`, `obs_conf`, and `obs_pre_break`: BIS observation attributes
 
 The summary applies the following rules:
 
