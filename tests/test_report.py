@@ -44,10 +44,13 @@ def test_generate_report_writes_expected_artifacts(tmp_path: Path) -> None:
         requested_countries=["CH"],
     )
 
+    report = report_path.read_text(encoding="utf-8")
+
     assert report_path == output_dir / "report.md"
     assert chart_path == output_dir / "policy_rates.png"
     assert report_path.is_file()
     assert chart_path.is_file()
-    assert "![Policy rate developments](policy_rates.png)" in report_path.read_text(
-        encoding="utf-8"
-    )
+    assert "Switzerland" in report
+    assert "0.0000%" in report
+    assert "↓ 0.2500 pp" in report
+    assert "![Policy rate developments](policy_rates.png)" in report
