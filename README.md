@@ -134,13 +134,12 @@ The pipeline applies the following rules:
 - Country and area codes are validated against the BIS codelist, with fuzzy matching used to suggest a close code when validation fails.
 - The task uses `EA` for the euro area, while BIS uses `XM`; the CLI resolves `EA` to `XM` and records both requested and BIS codes in the JSON output.
 
-Source data is cached locally for repeated runs; use `fetch --refresh` for a
-new reporting cycle. The `data/` directory is excluded from
+Source data is cached locally for repeated runs; use `fetch --refresh` to refresh download. The `data/` directory is excluded from
 version control.
 
 ## Tests and continuous integration
 
-Run the same checks locally that are used in CI:
+Run the same checks/tests locally that are used in CI:
 
 ```bash
 uv run ruff check .
