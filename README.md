@@ -102,9 +102,7 @@ This produces `data/processed/policy_rates.csv`.
 ### 3. Generate a report
 
 ```bash
-uv run bis-prates report \
-  --countries "ES,US,EA,GB,JP,CH" \
-  --start "2015-01-01"
+uv run bis-prates report --countries "ES,US,EA,GB,JP,CH" --start "2015-01-01"
 ```
 
 Invalid codes produce a suggestion when a sufficiently
