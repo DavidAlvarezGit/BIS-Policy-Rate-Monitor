@@ -140,6 +140,11 @@ The summary applies the following rules:
 - Missing observations are retained in the tidy dataset but excluded from
   numerical summary calculations.
 
+Source data is cached locally for repeated runs; use `fetch --refresh` for a
+new reporting cycle. The reproducible `data/` directory is excluded from
+version control. Because publication schedules and source coverage differ,
+the latest available observation date may vary by country.
+
 ## Tests and continuous integration
 
 Run the same checks locally that are used in CI:
@@ -154,15 +159,6 @@ The GitHub Actions workflow in `.github/workflows/ci.yaml` runs these checks on
 every push and pull request to `main`. It installs Python and the locked project
 environment with `uv sync --locked --all-extras --dev`, so CI uses the same
 dependency versions recorded in `uv.lock`.
-
-## Operational considerations
-
-- Source data is cached locally to make repeated development runs faster.
-- Use `fetch --refresh` for a new reporting cycle.
-- `data/` is intentionally excluded from version control because the BIS bulk
-  dataset is generated external data and can be reproduced by the pipeline.
-- Generated reports identify the latest available observation date. This may
-  differ across countries because of publication schedules and source coverage.
 
 ## AI usage note
 
