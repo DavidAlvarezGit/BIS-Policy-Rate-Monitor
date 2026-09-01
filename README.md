@@ -127,7 +127,7 @@ Each observation is uniquely identified by:
 country_code + frequency + observation_date
 ```
 
-The summary applies the following rules:
+The pipeline applies the following rules:
 
 - Daily observations are preferred within each country-month; monthly observations are used as a fallback and they are normalized to calendar month-end dates.
 - Countries without observations in the reporting period are excluded from the snapshot and reported separately with their latest historical observation and relevant BIS metadata.
