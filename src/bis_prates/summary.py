@@ -234,10 +234,7 @@ def write_summary(
 ) -> tuple[Path, Path]:
     """Write the policy-rate summary to CSV and JSON."""
     output_dir = Path(output_dir)
-    output_dir.mkdir(
-        parents=True,
-        exist_ok=True,
-    )
+    output_dir.mkdir(parents=True, exist_ok=True)
 
     csv_path = output_dir / "summary.csv"
     json_path = output_dir / "summary.json"
@@ -260,27 +257,31 @@ def write_summary(
             errors="coerce",
         ).dt.strftime("%Y-%m-%d")
 
-    countries = []
+    results = []
 
     for _, row in json_summary.iterrows():
-        countries.append(
+        results.append(
             {
-                "country_code": row["country_code"],
-                "country_name": row["country_name"],
-                "latest_snapshot": {
-                    "latest_rate_pct": row["latest_rate"],
-                    "latest_date": row["latest_date"],
-                    "last_month_end_rate_pct": row["previous_month_end_rate"],
-                    "last_month_end_date": row["previous_month_end_date"],
-                    "change_vs_last_month_end_pp": row["change_vs_previous_month_end"],
-                    "last_change_date": row["last_change_date"],
-                    "last_change_size_pp": row["last_change_size"],
-                    "policy_direction": row["policy_direction"],
-                    "days_since_last_change": row["days_since_last_change"],
+                "country": {
+                    "code": row["country_code"],
+                    "name": row["country_name"],
                 },
-                "series_metadata": {
-                    "frequency": row["frequency"],
+                "rate": {
+                    "latest": row["latest_rate"],
+                    "latest_date": row["latest_date"],
+                    "previous_month_end": row["previous_month_end_rate"],
+                    "previous_month_end_date": row["previous_month_end_date"],
+                    "monthly_change": row["change_vs_previous_month_end"],
+                },
+                "last_move": {
+                    "date": row["last_change_date"],
+                    "size": row["last_change_size"],
+                    "direction": row["policy_direction"],
+                    "days_ago": row["days_since_last_change"],
+                },
+                "series": {
                     "title": row["title"],
+                    "frequency": row["frequency"],
                     "unit_measure": row["unit_measure"],
                     "unit_multiplier": row["unit_multiplier"],
                     "decimals": row["decimals"],
@@ -289,14 +290,16 @@ def write_summary(
         )
 
     report = {
-        "run_date": pd.Timestamp.now(tz="UTC").date().isoformat(),
-        "start_date": start,
-        "dataflow_id": "WS_CBPOL",
-        "dataset_file": "WS_CBPOL_csv_flat.zip",
-        "source": "BIS Data Portal bulk download",
-        "requested_countries": requested_countries or [],
-        "resolved_countries": resolved_countries or [],
-        "countries": countries,
+        "generated_on": pd.Timestamp.now(tz="UTC").date().isoformat(),
+        "reporting_start": start,
+        "dataset": {
+            "id": "WS_CBPOL",
+            "file": "WS_CBPOL_csv_flat.zip",
+            "source": "BIS Data Portal bulk download",
+        },
+        "requested_codes": requested_countries or [],
+        "bis_codes": resolved_countries or [],
+        "results": results,
     }
 
     pd.Series(report).to_json(
