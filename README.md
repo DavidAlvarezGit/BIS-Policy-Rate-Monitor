@@ -129,14 +129,7 @@ country_code + frequency + observation_date
 
 The summary applies the following rules:
 
-- Daily observations are preferred within each country-month; monthly observations are used as a fallback.
-- Monthly observations are normalized to calendar month-end dates.
-- A country is included in the snapshot only if it has at least one usable observation in the requested reporting period.
-- Snapshot metrics use the full available BIS series for each included country.
-- The latest rate is the most recent non-missing observation available.
-- Previous month-end is the final available observation before the month of the latest rate.
-- The last move is the most recent non-zero change between consecutive observations.
-- Missing observations are retained during transformation but excluded from calculations.
+- Daily observations are preferred within each country-month; monthly observations are used as a fallback and they are normalized to calendar month-end dates.
 - Countries without observations in the reporting period are excluded from the snapshot and reported separately with their latest historical observation and relevant BIS metadata.
 - Country and area codes are validated against the BIS codelist, with fuzzy matching used to suggest a close code when validation fails.
 - The task uses `EA` for the euro area, while BIS uses `XM`; the CLI resolves `EA` to `XM` and records both requested and BIS codes in the JSON output.
