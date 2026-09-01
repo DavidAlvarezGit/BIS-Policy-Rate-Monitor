@@ -135,9 +135,8 @@ The pipeline applies the following rules:
 - The task uses `EA` for the euro area, while BIS uses `XM`; the CLI resolves `EA` to `XM` and records both requested and BIS codes in the JSON output.
 
 Source data is cached locally for repeated runs; use `fetch --refresh` for a
-new reporting cycle. The reproducible `data/` directory is excluded from
-version control. Because publication schedules and source coverage differ,
-the latest available observation date may vary by country.
+new reporting cycle. The `data/` directory is excluded from
+version control.
 
 ## Tests and continuous integration
 
